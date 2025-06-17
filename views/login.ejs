@@ -19,49 +19,44 @@
       <h2>Iniciar Sesión</h2>
 
       <form method="POST" action="/login">
-        <% if (messages && messages.length > 0) { %>
-          <div id="message-container">
-            <% messages.forEach(message => { %>
-              <div class="alert alert-danger mb-2" role="alert"><%= message %></div>
-            <% }) %>
-          </div>
-        <% } %>
-
         <div class="form-group">
-          <label for="email">Email</label>
-          <input type="email" id="email" name="email" value="<%= form?.email || '' %>">
+          <label for="email">Correo electrónico</label>
+          <input type="email" id="email" name="email" required>
         </div>
-
         <div class="form-group">
           <label for="password">Contraseña</label>
-          <input type="password" id="password" name="password" value="<%= form?.password || '' %>">
-          <span class="toggle-password">X Hide</span>
+          <input type="password" id="password" name="password" required>
         </div>
-
-        <div class="social-login">
-          <button class="LOGIN" type="submit">Iniciar Sesión</button>
-        </div>
-
-        <div class="olvido-password">
-          <a href="/solicitar_cambio_contrasena" class="olvidoButton">Olvidé mi contraseña</a>
-        </div>
-
-        <div class="register-link">
-          <br>
-          <span class="span-register">¿No tienes una cuenta? <a href="/registro">Crear cuenta</a></span>
-        </div>
-
-        <div class="divider">
-          <hr>
-          <span>O continúa con</span>
-          <hr>
-        </div>
-
-        <div class="social-login">
-          <button class="btn-facebook" type="button">Continuar con Facebook</button>
-          <button class="btn-google" type="button">Continuar con Google</button>
-        </div>
+        <button type="submit" class="btn-login">Iniciar Sesión</button>
       </form>
+
+      <% if (messages && messages.length > 0) { %>
+        <div id="message-container">
+          <% messages.forEach(function(message) { %>
+            <div class="alert alert-danger"><%= message %></div>
+          <% }); %>
+        </div>
+      <% } %>
+
+      <div class="olvido-password">
+        <a href="/solicitar_cambio_contrasena" class="olvidoButton">Olvidé mi contraseña</a>
+      </div>
+
+      <div class="register-link">
+        <br>
+        <span class="span-register">¿No tienes una cuenta? <a href="/registro">Crear cuenta</a></span>
+      </div>
+
+      <div class="divider">
+        <hr>
+        <span>O continúa con</span>
+        <hr>
+      </div>
+
+      <div class="social-login">
+        <button class="btn-facebook" type="button">Continuar con Facebook</button>
+        <button class="btn-google" type="button">Continuar con Google</button>
+      </div>
     </div>
   </div>
 

@@ -1,32 +1,27 @@
 const express = require('express');
 const path = require('path');
 const session = require('express-session');
+const db = require('./db'); // Importar la conexión a la base de datos
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Configurar sesiones
+// Configurar middlewares
+app.use(express.urlencoded({ extended: true })); // Para datos de formularios
+app.use(express.json()); // Para datos en formato JSON
 app.use(session({
   secret: 'clave_secreta_segura',
   resave: false,
   saveUninitialized: false
 }));
 
-// Middleware para parsear datos del formulario
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
-
-// Middleware para mensajes flash simples
 app.use((req, res, next) => {
   res.locals.messages = req.session.messages || [];
-  res.locals.form = req.session.form || {};
-  res.locals.session = req.session;
-  req.session.messages = [];
-  req.session.form = {};
+  req.session.messages = []; // Limpia los mensajes después de usarlos
   next();
 });
 
-// Motor de plantillas EJS
+// Configurar motor de plantillas EJS
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
@@ -60,11 +55,9 @@ app.get('/', (req, res) => {
     }
   ];
 
-  // Simular un usuario logueado (puedes ajustar según sesión real)
   const usuario_actual = req.session.validar
     ? {
-        full_name: 'Santiago Gómez',
-        foto_perfil: null,
+        full_name: req.session.full_name,
         tipoUsuario: req.session.tipoUsuario
       }
     : null;
@@ -72,7 +65,8 @@ app.get('/', (req, res) => {
   res.render('index', {
     productos,
     usuario_actual,
-    session: req.session
+    session: req.session,
+    messages: res.locals.messages || [] // Asegurarte de pasar messages
   });
 });
 
@@ -84,17 +78,28 @@ app.get('/login', (req, res) => {
 // RUTA DE LOGIN (POST)
 app.post('/login', (req, res) => {
   const { email, password } = req.body;
+  console.log('Datos recibidos:', { email, password });
 
-  // Validación simple de ejemplo
-  if (email === 'admin@correo.com' && password === '1234') {
+  try {
+    const query = `SELECT * FROM usuarios WHERE email = ?`;
+    const user = db.prepare(query).get(email);
+    console.log('Usuario encontrado:', user);
+
+    if (!user || user.password !== password) {
+      console.log('Error: Correo o contraseña incorrectos');
+      req.session.messages = ['Correo o contraseña incorrectos'];
+      return res.redirect('/login');
+    }
+
     req.session.validar = true;
-    req.session.tipoUsuario = 'admin';
-    return res.redirect('/');
+    req.session.tipoUsuario = user.tipoUsuario || 'usuario';
+    req.session.full_name = user.full_name;
+    res.redirect('/');
+  } catch (err) {
+    console.error('Error al iniciar sesión:', err);
+    req.session.messages = ['Error al iniciar sesión'];
+    res.redirect('/login');
   }
-
-  req.session.messages = ['Correo o contraseña incorrectos'];
-  req.session.form = { email };
-  res.redirect('/login');
 });
 
 // RUTA DE REGISTRO
@@ -106,12 +111,35 @@ app.get('/registro', (req, res) => {
 
 // RUTA DE REGISTRO (POST)
 app.post('/registro', (req, res) => {
-  // Aquí va la lógica para registrar el usuario
-  // Por ejemplo, puedes guardar los datos en la base de datos
+  const { full_name, email, username, telefono, departamento, direccion, municipio, password } = req.body;
 
-  // Ejemplo simple: redirigir al login después de registrar
-  // Puedes agregar validaciones y mensajes según tu necesidad
-  res.redirect('/login');
+  // Validar que los campos no estén vacíos
+  if (!full_name || !email || !username || !telefono || !departamento || !direccion || !municipio || !password) {
+    req.session.messages = ['Todos los campos son obligatorios'];
+    return res.redirect('/registro');
+  }
+
+  try {
+    // Insertar el usuario en la base de datos
+    const query = `
+      INSERT INTO usuarios (full_name, email, username, telefono, departamento, direccion, municipio, password)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+    db.prepare(query).run(full_name, email, username, telefono, departamento, direccion, municipio, password);
+
+    // Establecer sesión y redirigir al índice
+    req.session.validar = true;
+    req.session.tipoUsuario = 'usuario';
+    req.session.full_name = full_name; // Guardar el nombre del usuario en la sesión
+    res.redirect('/');
+  } catch (err) {
+    if (err.code === 'SQLITE_CONSTRAINT') {
+      req.session.messages = ['El correo ya está registrado'];
+    } else {
+      req.session.messages = ['Error al registrar el usuario'];
+    }
+    res.redirect('/registro');
+  }
 });
 
 // RUTA DE LOGOUT

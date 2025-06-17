@@ -17,33 +17,33 @@
           
         <div id="mensaje" class="alert alert-danger visible" role="alert" <% if (!messages || messages.length === 0) { %>style="display: none;"<% } %>>
           <% if (messages && messages.length > 0) { %>
-              <ul>
-                  <% messages.forEach(function(message) { %>
-                      <li><%= message %></li>
-                  <% }); %>
-              </ul>
+            <ul>
+              <% messages.forEach(function(message) { %>
+                <li><%= message %></li>
+              <% }); %>
+            </ul>
           <% } %>
         </div>
         
         <div> 
           <h2 id="container-crear-cuenta">Crear una cuenta</h2>
         </div>
-        <form method="POST" action="/registro" enctype="multipart/form-data">
+        <form method="POST" action="/registro">
           <div class="form-group">
-              <label for="full-name">Nombre completo</label>
-              <input type="text" id="full-name" name="full_name" required>
+            <label for="full-name">Nombre completo</label>
+            <input type="text" id="full-name" name="full_name" required>
           </div>
           <div class="form-group">
-              <label for="email">Correo electrónico</label>
-              <input type="email" id="email" name="email" required>
+            <label for="email">Correo electrónico</label>
+            <input type="email" id="email" name="email" required>
           </div>
           <div class="form-group">
-              <label for="username">Nombre de usuario</label>
-              <input type="text" id="username" name="username" required>
+            <label for="username">Nombre de usuario</label>
+            <input type="text" id="username" name="username" required>
           </div>
           <div class="form-group">
             <label for="telefono">Teléfono</label>
-            <input type="number" id="telefono" min="0" pattern="[0-9]+" name="telefono" required>
+            <input type="number" id="telefono" name="telefono" required>
           </div>
           <div class="form-group">
             <label for="departamento">Departamento</label>
@@ -58,12 +58,8 @@
             <input type="text" id="municipio" name="municipio" required>
           </div>
           <div class="form-group">
-              <label for="password">Contraseña</label>
-              <input type="password" id="password" name="password" required>
-          </div>
-          <div class="form-group">
-            <label for="foto-perfil">Foto de perfil (opcional)</label>
-            <input type="file" id="foto-perfil" name="foto_perfil" accept="image/*">
+            <label for="password">Contraseña</label>
+            <input type="password" id="password" name="password" required>
           </div>
           <button type="submit" class="btn-register">Crear cuenta</button>
         </form>
