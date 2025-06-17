@@ -1,0 +1,91 @@
+<header>
+  <div class="navigation">
+    <div class="navigation_wrapper">
+      <div class="middle_nav_wrapper">
+        <div class="middle_nav">
+          <div class="logo">
+            <div class="text_wrapper">MERKACHECHERES</div>
+          </div>
+          <div class="frame">
+            <div class="div_wrapper">
+              <div class="div">
+                <button class="dropbtn">Inicio</button>
+              </div>
+            </div>
+            <div class="btn_primary_wrapper">
+              <button class="dropbtn" onclick="window.location.href='/categorias'">Categorías</button>
+            </div>
+            <div class="div_wrapper">
+              <div class="div">
+                <button class="dropbtn">Catálogo</button>
+              </div>
+            </div>
+          </div>
+          <div class="buscar">
+            <input type="text" placeholder="Buscar algo.." class="navbar">
+          </div>
+          <div class="frame_2">
+            <div class="iniciar_crear_cuenta">
+              <% if (!session.validar) { %>
+                <div class="btn_login">
+                  <button class="button_text_wrapper" onclick="window.location.href='/login'">Iniciar Sesión</button>
+                </div>
+                <div class="btn_registro">
+                  <button class="button_text_wrapper" onclick="window.location.href='/registro'">Crear Cuenta</button>
+                </div>
+              <% } %>
+            </div>
+
+            <% if (session.validar && usuario && usuario.rol === 1) { %>
+              <div class="btn_admin">
+                <button class="button_text_wrapper" onclick="window.location.href='/admin'">Ir al Dashboard</button>
+              </div>
+            <% } %>
+
+            <div class="icons">
+              <% if (session.validar && usuario && usuario.rol === 3) { %>
+                <div class="vender_button_div">
+                  <button class="vender-button" onclick="window.location.href='/publicar'">
+                    Vender <img src="/img/vender.png" alt="Usuario">
+                  </button>
+                </div>
+              <% } %>
+              <div class="shopping_cart_simple">
+                <button class="dropbtn">
+                  <img src="/img/Heart.png" alt="Favoritos">
+                </button>
+              </div>
+              <div class="shopping_cart_simple2">
+                <div class="overlap_group">
+                  <button class="dropbtn" id="carrito-button">
+                    <img src="/img/Shopping.png" alt="Carrito">
+                  </button>
+                  <div class="frame_3">
+                    <div class="text_wrapper_3">2</div>
+                  </div>
+                </div>
+              </div>
+              <% if (session.validar) { %>
+                <div class="shopping_cart_simple3">
+                  <button class="user-slider-button" id="user-button">
+                    <img src="/img/Vector.png" alt="Usuario">
+                  </button>
+                </div>
+              <% } %>
+              <% if (messages && messages.length > 0) { %>
+                <div id="message-container">
+                  <% messages.forEach(function(message) { %>
+                    <div class="alert alert-<%= message.tags %> alert-dismissible fade show" role="alert">
+                      <%= message.text %>
+                      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                  <% }) %>
+                </div>
+              <% } %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>

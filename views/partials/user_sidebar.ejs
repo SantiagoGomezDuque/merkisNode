@@ -1,0 +1,37 @@
+<% if (session?.validar && usuario_actual) { %>
+<aside id="user-sidebar">
+  <button id="close-user" class="btn btn-light close-btn">
+    <i class="bi bi-x-lg">X</i>
+  </button>
+
+  <div class="user-info">
+    <h2>
+      <p>Bienvenido, <%= usuario_actual.full_name %></p>
+    </h2>
+
+    <% if (usuario_actual.foto_perfil) { %>
+      <img src="<%= usuario_actual.foto_perfil %>" alt="Foto del usuario" class="user-logo">
+    <% } else { %>
+      <img src="/img/default-user.png" alt="Usuario predeterminado" class="user-logo">
+    <% } %>
+  </div>
+
+  <ul id="user-items" class="list-group">
+    <!-- Puedes llenar esto dinámicamente con JS si es necesario -->
+  </ul>
+
+  <div class="btn_logout">
+    <button>
+      <img src="/img/Vector.png" onclick="window.location.href='/editar_perfil'" id="heartButton" alt="Usuario">
+    </button>
+
+    <button class="button_text_wrapper" onclick="window.location.href='/logout'">Cerrar Sesión</button>
+  </div>
+</aside>
+<% } %>
+
+<!-- Scripts -->
+<script src="/js/carrito-sidebar.js"></script>
+<script src="/js/slider.js"></script>
+<script src="/js/user-sidebar.js"></script>
+<script src="/js/index.js"></script>

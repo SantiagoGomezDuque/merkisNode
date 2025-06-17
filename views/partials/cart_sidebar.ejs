@@ -1,0 +1,48 @@
+<aside id="cart-sidebar">
+  <button id="close-cart" class="btn btn-light close-btn">
+    <i class="bi bi-x-lg">X</i>
+  </button>
+
+  <h2>Carrito de Compras</h2>
+
+  <ul id="cart-items" class="list-group">
+    <% if (session?.carrito && Object.keys(session.carrito).length > 0) { %>
+      <% for (const [producto_id, producto] of Object.entries(session.carrito)) { %>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <span>
+            <% if (producto.imagen_url) { %>
+              <img src="<%= producto.imagen_url %>" alt="Imagen" style="height:40px;width:40px;object-fit:cover;margin-right:8px;">
+            <% } %>
+            <%= producto.titulo %> - $<%= producto.precio %> x<%= producto.cantidad %>
+          </span>
+          <div>
+            <button class="btn btn-sm btn-danger" onclick="window.location.href='/vaciar_carrito'">
+              <i class="bi bi-trash"></i>
+            </button>
+          </div>
+        </li>
+      <% } %>
+    <% } else { %>
+      <li class="list-group-item text-center">El carrito está vacío</li>
+    <% } %>
+  </ul>
+
+  <div class="cart-footer">
+    <p>Total: $<span id="cart-total">
+      <% if (session?.carrito && total_carrito) { %>
+        <%= total_carrito %>
+      <% } else { %>
+        0.00
+      <% } %>
+    </span></p>
+
+    <button id="clear-cart" class="btn btn-danger" onclick="window.location.href='/vaciar_carrito'">
+      <i class="bi bi-trash"></i> Vaciar Carrito
+    </button>
+
+    <button id="checkout" class="btn btn-success">
+      <i class="bi bi-credit-card"></i> Pagar
+    </button>
+  </div>
+</aside>
+<script src="/js/carrito.js"></script>
