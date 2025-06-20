@@ -24,7 +24,7 @@ npm install --global windows-build-tools
 sudo apt-get install build-essential python3
 ```
 
-### Usuario de prueba:
+### Usuario de prueba, ingresa como cliente:
 ```bash
 Email: Santiago@algo.com
 Contraseña: 123
