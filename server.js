@@ -1,7 +1,9 @@
 const express = require('express');
 const path = require('path');
 const session = require('express-session');
-const db = require('./db'); // Importar la conexión a la base de datos
+const db = require('./db');
+const passport = require('passport');
+require('./auth');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -14,6 +16,9 @@ app.use(session({
   resave: false,
   saveUninitialized: false
 }));
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use((req, res, next) => {
   res.locals.messages = req.session.messages || [];
@@ -148,6 +153,20 @@ app.get('/logout', (req, res) => {
     res.redirect('/');
   });
 });
+
+// Rutas de autenticación con Facebook
+app.get('/auth/facebook', passport.authenticate('facebook', { scope: ['email'] }));
+
+app.get('/auth/facebook/callback',
+  passport.authenticate('facebook', { failureRedirect: '/login' }),
+  function(req, res) {
+    // Ya está logueado y registrado
+    req.session.validar = true;
+    req.session.tipoUsuario = 'usuario';
+    req.session.full_name = req.user.full_name;
+    res.redirect('/');
+  }
+);
 
 // Iniciar servidor
 app.listen(PORT, () => {
