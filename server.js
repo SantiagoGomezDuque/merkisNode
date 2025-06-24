@@ -3,6 +3,7 @@ const path = require('path');
 const session = require('express-session');
 const db = require('./db');
 const passport = require('passport');
+const nodemailer = require('nodemailer'); // Importar Nodemailer
 require('./auth');
 
 const app = express();
@@ -115,14 +116,8 @@ app.get('/registro', (req, res) => {
 });
 
 // RUTA DE REGISTRO (POST)
-app.post('/registro', (req, res) => {
+app.post('/registro', async (req, res) => {
   const { full_name, email, username, telefono, departamento, direccion, municipio, password } = req.body;
-
-  // Validar que los campos no estén vacíos
-  if (!full_name || !email || !username || !telefono || !departamento || !direccion || !municipio || !password) {
-    req.session.messages = ['Todos los campos son obligatorios'];
-    return res.redirect('/registro');
-  }
 
   try {
     // Insertar el usuario en la base de datos
@@ -132,12 +127,33 @@ app.post('/registro', (req, res) => {
     `;
     db.prepare(query).run(full_name, email, username, telefono, departamento, direccion, municipio, password);
 
+    // Configurar transporte de correo
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: 'Sgomezd28@gmail.com', // Reemplaza con tu correo
+        pass: 'orxf ktpb uhhg tkiy', // Contraseña de aplicación generada
+      },
+    });
+
+    // Configurar contenido del correo
+    const mailOptions = {
+      from: 'Sgomezd28@gmail.com',
+      to: email,
+      subject: 'Bienvenido a MerkaChecheres',
+      text: `Hola ${full_name}, ¡Gracias por registrarte! Ahora formas parte de nuestra tienda. Estamos aquí para que tu experiencia de compra sea fácil, rápida y llena de buenos descubrimientos. ¡Explora y encuentra eso que tanto te gusta!`,
+    };
+
+    // Enviar correo
+    await transporter.sendMail(mailOptions);
+
     // Establecer sesión y redirigir al índice
     req.session.validar = true;
     req.session.tipoUsuario = 'usuario';
-    req.session.full_name = full_name; // Guardar el nombre del usuario en la sesión
+    req.session.full_name = full_name;
     res.redirect('/');
   } catch (err) {
+    console.error('Error al registrar usuario:', err);
     if (err.code === 'SQLITE_CONSTRAINT') {
       req.session.messages = ['El correo ya está registrado'];
     } else {
