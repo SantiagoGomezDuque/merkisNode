@@ -184,6 +184,82 @@ app.get('/auth/facebook/callback',
   }
 );
 
+// RUTA PARA RESTABLECER CONTRASEÑA (GET)
+app.get('/reset-password/:token', (req, res) => {
+  const { token } = req.params;
+  res.render('reset-password', { token });
+});
+
+// RUTA PARA RESTABLECER CONTRASEÑA (POST)
+app.post('/reset-password', async (req, res) => {
+  const { password, token } = req.body;
+
+  try {
+    // Actualizar la contraseña en la base de datos
+    db.prepare('UPDATE usuarios SET password = ?, reset_token = NULL WHERE reset_token = ?').run(password, token);
+
+    req.session.messages = ['Contraseña restablecida con éxito'];
+    res.redirect('/login');
+  } catch (err) {
+    console.error('Error al restablecer la contraseña:', err);
+    req.session.messages = ['Error al restablecer la contraseña'];
+    res.redirect('/login');
+  }
+});
+
+// RUTA PARA OLVIDÉ MI CONTRASEÑA (GET)
+app.get('/forgot-password', (req, res) => {
+  res.render('forgot-password');
+});
+
+// RUTA PARA OLVIDÉ MI CONTRASEÑA (POST)
+app.post('/forgot-password', async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    // Verificar si el correo existe en la base de datos
+    const user = db.prepare('SELECT * FROM usuarios WHERE email = ?').get(email);
+
+    if (!user) {
+      req.session.messages = ['El correo no está registrado'];
+      return res.redirect('/login');
+    }
+
+    // Generar un token único para el restablecimiento de contraseña
+    const resetToken = Math.random().toString(36).substring(2, 15);
+
+    // Guardar el token en la base de datos (puedes usar una tabla o campo adicional)
+    db.prepare('UPDATE usuarios SET reset_token = ? WHERE email = ?').run(resetToken, email);
+
+    // Configurar transporte de correo
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: 'tu_correo@gmail.com', // Reemplaza con tu correo
+        pass: 'contraseña_de_aplicación', // Contraseña de aplicación generada
+      },
+    });
+
+    // Configurar contenido del correo
+    const mailOptions = {
+      from: 'tu_correo@gmail.com',
+      to: email,
+      subject: 'Restablecimiento de contraseña',
+      text: `Hola ${user.full_name},\n\nHemos recibido una solicitud para restablecer tu contraseña. Haz clic en el siguiente enlace para restablecerla:\n\nhttp://localhost:3000/reset-password/${resetToken}\n\nSi no solicitaste este cambio, ignora este correo.\n\nGracias,\nEl equipo de MerkaChecheres`,
+    };
+
+    // Enviar correo
+    await transporter.sendMail(mailOptions);
+
+    req.session.messages = ['Se ha enviado un correo para restablecer tu contraseña'];
+    res.redirect('/login');
+  } catch (err) {
+    console.error('Error al enviar correo de restablecimiento:', err);
+    req.session.messages = ['Error al enviar el correo'];
+    res.redirect('/login');
+  }
+});
+
 // Iniciar servidor
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);

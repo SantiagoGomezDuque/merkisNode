@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Publicar en MerkaChecheres</title>
+    <link rel="stylesheet" href="/css/styleArticulo.css">
+    <link rel="stylesheet" href="/css/styleguide.css">
+</head>
+<body>
+    <header>
+        <div class="navigation">
+            <div class="navigation_wrapper">
+                <div class="middle_nav_wrapper">
+                    <div class="middle_nav">
+                        <div class="logo">
+                            <div class="text_wrapper">MERKACHECHERES</div>
+                        </div>
+                        
+                        <div class="frame">
+                            <div class="div_wrapper">
+                                <div class="div">
+                                    <button class="dropbtn" onclick="window.location.href='/'">Inicio</button>
+                                </div>
+                            </div>
+                            <div class="btn_primary_wrapper">
+                                <button class="dropbtn">Categorías</button>
+                            </div>        
+                            <div class="div_wrapper">
+                                <div class="div">
+                                    <button class="dropbtn">Catálogo</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="buscar">
+                            <input type="text" id="buscar" name="buscar" placeholder="Buscar algo..." class="navbar">
+                        </div>
+                        <div class="frame_2">
+                            <div class="iniciar_crear_cuenta">
+                                <div class="btn_login"> 
+                                    <% if (!session.validar) { %>
+                                        <button class="button_text_wrapper" onclick="window.location.href='/login'">Iniciar Sesión</button>
+                                    <% } %>
+                                </div>
+                                <div class="btn_registro">
+                                    <% if (!session.validar) { %>
+                                        <button class="button_text_wrapper" onclick="window.location.href='/registro'">Crear Cuenta</button>
+                                    <% } %>
+                                </div>
+                            </div>
+                            <div class="icons">                   
+                                <!-- Aquí puedes agregar íconos si es necesario -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <div class="container">
+        <% if (messages && messages.length > 0) { %>
+            <div id="message-container">
+                <% messages.forEach(function(message) { %>
+                    <div class="alert <%= message.tags === 'error' ? 'alert-error' : 'alert-success' %> alert-dismissible fade show" role="alert">
+                        <%= message.text %>
+                    </div>
+                <% }); %>
+            </div>
+        <% } %>
+        <div class="header">
+            <div class="back-button-container">
+                <button class="back-button" onclick="goBack()">← </button>
+                <h2>Publicar un artículo en MerkaChecheres</h2>
+            </div>
+        </div>
+        
+        <form method="POST" enctype="multipart/form-data" id="product-form">
+            <div class="camposTexto">
+                <label for="imagen">Subir imágenes (máx. 12)</label>
+                <input type="file" id="imagen" name="imagen" multiple accept="image/*">
+                
+                <div class="preview-container" id="preview-container">
+                    <!-- Aquí se mostrarán las previsualizaciones -->
+                </div>
+
+                <label for="titulo">Título del artículo</label>
+                <input type="text" id="titulo" name="titulo" placeholder="Bolígrafo Negro Marca Sharpie">
+
+                <label for="marca">Marca</label>
+                <input type="text" id="marca" name="marca" placeholder="Ejemplo: Samsung">
+
+                <label for="descuento">Descuento</label>
+                <input type="text" id="descuento" name="descuento" placeholder="¿Deseas añadir un descuento especial?">
+
+                <label for="dimensiones">Dimensiones</label>
+                <input type="text" id="dimensiones" name="dimensiones" placeholder="Ejemplo: 30x20x15 cm">
+
+                <label for="Stock">Stock</label>
+                <input type="number" id="Stock" name="Stock" min="0" placeholder="Ejemplo: 10" value="1" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+
+                <label for="precio">Precio</label>
+                <input type="number" id="precio" name="precio" min="0" placeholder="Agrega un precio, por ejemplo: 100.000" oninput="this.value = this.value.replace(/[^0-9.]/g, '')">
+
+                <label for="categoria">Categoría</label>
+                <select name="categoria" id="categoria">
+                    <% categorias.forEach(function(categoria) { %>
+                        <option value="<%= categoria.id %>"><%= categoria.nombre %></option>
+                    <% }); %>
+                </select>
+
+                <label for="descripcion">Descripción</label>
+                <textarea id="descripcion" name="descripcion" placeholder="Agrega una descripción detallada"></textarea>
+            </div>
+            
+            <div class="button-group">
+                <button type="submit" class="publish-btn">Publicar</button>
+                <button type="button" class="cancel-btn" onclick="window.location.href='/'">Cancelar</button>
+            </div>
+        </form>
+    </div>
+    
+    <script>
+        const messageContainer = document.getElementById('message-container');
+        if (messageContainer) {
+            const successMessage = messageContainer.querySelector('.alert-success');
+            if (successMessage) {
+                setTimeout(() => {
+                    window.location.href = "/";
+                }, 3000);
+            }
+        }
+
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+    <script src="/js/vendedor.js"></script>
+    <script src="/js/carrito-sidebar.js"></script>
+    <script src="/js/slider.js"></script>
+    <script src="/js/user-sidebar.js"></script>
+    <script src="/js/index.js"></script>
+</body>
+</html>

@@ -7,14 +7,13 @@
     <link rel="stylesheet" href="/css/style.css" />
     <link rel="stylesheet" href="/css/styleguide.css" />
     <link rel="stylesheet" href="/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   </head>
   <body class="body-register">
     <div class="register-container">
       <div class="register-box">
-        <button
-          class="close-btn"
-          onclick="window.location.href='/'">x</button>
-          
+        <button class="close-btn" onclick="window.location.href='/'">x</button>
+        
         <div id="mensaje" class="alert alert-danger visible" role="alert" <% if (!messages || messages.length === 0) { %>style="display: none;"<% } %>>
           <% if (messages && messages.length > 0) { %>
             <ul>
@@ -28,7 +27,7 @@
         <div> 
           <h2 id="container-crear-cuenta">Crear una cuenta</h2>
         </div>
-        <form method="POST" action="/registro">
+        <form method="POST" action="/registro" id="register-form">
           <div class="form-group">
             <label for="full-name">Nombre completo</label>
             <input type="text" id="full-name" name="full_name" required>
@@ -59,7 +58,24 @@
           </div>
           <div class="form-group">
             <label for="password">Contraseña</label>
-            <input type="password" id="password" name="password" required>
+            <div class="password-container">
+              <input type="password" id="password" name="password" autocomplete="new-password" required>
+              <i class="fa fa-eye password-toggle" onclick="togglePassword()"></i>
+            </div>
+            <ul id="password-requirements">
+              <li class="requirement">Debe tener al menos 8 caracteres</li>
+              <li class="requirement">Debe incluir una letra mayúscula</li>
+              <li class="requirement">Debe incluir una letra minúscula</li>
+              <li class="requirement">Debe incluir un número</li>
+              <li class="requirement">Debe incluir un carácter especial</li>
+            </ul>
+          </div>
+          <div class="form-group">
+            <label for="confirm-password">Confirmar contraseña</label>
+            <div class="password-container">
+              <input type="password" id="confirm-password" name="confirm_password" required>
+              <i class="fa fa-eye password-toggle" onclick="toggleConfirmPassword()"></i>
+            </div>
           </div>
           <button type="submit" class="btn-register">Crear cuenta</button>
         </form>
@@ -81,7 +97,6 @@
         </div>
       </div>
     </div>
-    <script src="/js/libreria.js"></script>
     <script src="/js/registro.js"></script>
   </body>
 </html>

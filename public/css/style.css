@@ -2119,7 +2119,8 @@ main {
     height: 300px;
     background-color: #f2f2f2;
     border-radius: 12px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    box-shadow: 0 0 10px rgba(0,0,0,0.1); 
+}
   
   
 
@@ -2196,7 +2197,6 @@ main {
 
 .containerCheckBoxes {
     margin: 10.1px;
-}
  }
 
 
@@ -2316,3 +2316,42 @@ main {
 .btn-coordinates:hover {
   background-color: #0056b3;
 }
+
+.password-container {
+  position: relative;
+}
+
+.password-container input {
+  width: 100%;
+  padding-right: 40px; /* Espacio para el ícono */
+}
+
+.password-toggle {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #6c757d; /* Color del ícono */
+}
+
+.password-toggle:hover {
+  color: #000; /* Color al pasar el cursor */
+}
+
+#password-requirements {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0;
+}
+
+.requirement {
+  color: red; /* Rojo por defecto */
+  font-size: 14px; /* Ajusta el tamaño de la fuente */
+  margin-bottom: 5px; /* Espaciado entre los elementos */
+}
+
+.requirement.valid {
+  color: green; /* Verde cuando se cumple */
+}
+
